@@ -1,9 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, Github, BookOpen, Mail, Shield } from 'lucide-react';
+import api from '../../api/api';
+import { FRONTEND_VERSION } from '../../config/version';
 
 const Footer = ({ isCollapsed = false }) => {
   const currentYear = new Date().getFullYear();
+  const [backendVersion, setBackendVersion] = useState('loading...');
+
+  useEffect(() => {
+    // Fetch backend version
+    api.get('/api/version')
+      .then(response => {
+        if (response.data.success) {
+          setBackendVersion(response.data.version);
+        }
+      })
+      .catch(() => {
+        setBackendVersion('unknown');
+      });
+  }, []);
 
   return (
     <footer className="fixed bottom-0 left-0 right-0 z-20 border-t border-border bg-card/95 backdrop-blur-sm">
@@ -16,10 +32,17 @@ const Footer = ({ isCollapsed = false }) => {
             <span className="hidden md:flex items-center gap-1">
               Made with <Heart className="h-3 w-3 text-red-500 fill-current animate-pulse" /> for automation
             </span>
+            <span className="hidden lg:inline">•</span>
+            <span className="hidden lg:inline text-xs">
+              v{FRONTEND_VERSION}
+            </span>
           </div>
 
           {/* Right side - Links */}
           <div className="flex items-center gap-3 text-xs">
+            <span className="text-muted-foreground hidden md:inline">
+              API v{backendVersion}
+            </span>
             <Link
               to="/api-docs"
               className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
