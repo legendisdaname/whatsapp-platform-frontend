@@ -134,7 +134,7 @@ function ApiDocs() {
             Complete reference for the Streamfinitytv WhatsApp API
           </p>
         </div>
-        <Button variant="outline" onClick={() => window.open(`${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api-docs`, '_blank')}>
+        <Button variant="outline" onClick={() => window.open(`${process.env.REACT_APP_API_URL || 'https://whatapi.streamfinitytv.com'}/api-docs`, '_blank')}>
           <ExternalLink className="mr-2 h-4 w-4" />
           Swagger Docs
         </Button>
@@ -206,7 +206,7 @@ function ApiDocs() {
                   <div>
                     <h3 className="font-semibold mb-2">Base URL</h3>
                     <code className="block bg-accent p-3 rounded text-sm">
-                      {process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api
+                      {process.env.REACT_APP_API_URL || 'https://whatapi.streamfinitytv.com'}/api
                     </code>
                   </div>
 
@@ -279,7 +279,7 @@ function ApiDocs() {
                         <h4 className="text-sm font-medium mb-2">Option A: x-api-key header</h4>
                         <CodeBlock
                           code={`curl -H "x-api-key: ${apiKey || 'wp_live_your_api_key_here'}" \\
-  ${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api/sessions`}
+  ${process.env.REACT_APP_API_URL || 'https://whatapi.streamfinitytv.com'}/api/sessions`}
                           language="bash"
                           id="auth-api-key-1"
                         />
@@ -289,7 +289,7 @@ function ApiDocs() {
                         <h4 className="text-sm font-medium mb-2">Option B: Authorization header</h4>
                         <CodeBlock
                           code={`curl -H "Authorization: Bearer ${apiKey || 'wp_live_your_api_key_here'}" \\
-  ${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api/sessions`}
+  ${process.env.REACT_APP_API_URL || 'https://whatapi.streamfinitytv.com'}/api/sessions`}
                           language="bash"
                           id="auth-api-key-2"
                         />
@@ -310,7 +310,7 @@ function ApiDocs() {
                       <div>
                         <h4 className="text-sm font-medium mb-2">1. Login to get token</h4>
                         <CodeBlock
-                          code={`curl -X POST ${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api/auth/login \\
+                          code={`curl -X POST ${process.env.REACT_APP_API_URL || 'https://whatapi.streamfinitytv.com'}/api/auth/login \\
   -H "Content-Type: application/json" \\
   -d '{
     "email": "user@example.com",
@@ -325,7 +325,7 @@ function ApiDocs() {
                         <h4 className="text-sm font-medium mb-2">2. Use token in requests</h4>
                         <CodeBlock
                           code={`curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \\
-  ${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api/sessions`}
+  ${process.env.REACT_APP_API_URL || 'https://whatapi.streamfinitytv.com'}/api/sessions`}
                           language="bash"
                           id="auth-jwt"
                         />
@@ -685,7 +685,7 @@ function ApiDocs() {
                       code={`const axios = require('axios');
 
 const API_KEY = '${apiKey || 'wp_live_your_api_key_here'}';
-const BASE_URL = '${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api';
+const BASE_URL = '${process.env.REACT_APP_API_URL || 'https://whatapi.streamfinitytv.com'}/api';
 
 async function sendMessage() {
   try {
@@ -739,7 +739,7 @@ sendMessage();`}
                       code={`import requests
 
 API_KEY = '${apiKey || 'wp_live_your_api_key_here'}'
-BASE_URL = '${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api'
+BASE_URL = '${process.env.REACT_APP_API_URL || 'https://whatapi.streamfinitytv.com'}/api'
 
 def get_sessions():
     headers = {
@@ -777,7 +777,7 @@ get_sessions()`}
                       code={`<?php
 
 $apiKey = '${apiKey || 'wp_live_your_api_key_here'}';
-$baseUrl = '${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api';
+$baseUrl = '${process.env.REACT_APP_API_URL || 'https://whatapi.streamfinitytv.com'}/api';
 
 $data = array(
     'session_id' => 'your-session-id',
@@ -821,7 +821,7 @@ echo $result;
                   <div>
                     <h4 className="text-sm font-semibold mb-2">Example: List Contacts</h4>
                     <CodeBlock
-                      code={`curl -X GET ${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api/contacts \\
+                      code={`curl -X GET ${process.env.REACT_APP_API_URL || 'https://whatapi.streamfinitytv.com'}/api/contacts \\
   -H "x-api-key: ${apiKey || 'wp_live_your_api_key_here'}"`}
                       language="bash"
                       id="curl-example"

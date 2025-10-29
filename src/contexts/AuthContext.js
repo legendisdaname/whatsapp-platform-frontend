@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com';
+const API_URL = process.env.REACT_APP_API_URL || 'https://whatapi.streamfinitytv.com';
 
 const AuthContext = createContext({});
 
