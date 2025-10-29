@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+// Auto-detect production vs development
+const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_URL = process.env.REACT_APP_API_URL || (isLocalhost ? 'http://localhost:5000' : 'https://whatsapp-platform-backend.onrender.com');
 
 const AuthContext = createContext({});
 
@@ -93,18 +95,30 @@ export const AuthProvider = ({ children }) => {
 
   // Handle Google OAuth callback
   const handleGoogleCallback = async (code) => {
-    const response = await axios.post(`${API_URL}/api/auth/google/callback`, {
-      code
-    });
+    try {
+      console.log('Calling backend at:', `${API_URL}/api/auth/google/callback`);
+      
+      const response = await axios.post(`${API_URL}/api/auth/google/callback`, {
+        code
+      });
 
-    if (!response.data.success) {
-      throw new Error(response.data.message);
+      if (!response.data.success) {
+        throw new Error(response.data.message);
+      }
+
+      // Store token and user
+      localStorage.setItem('authToken', response.data.token);
+      setUser(response.data.user);
+      return response.data;
+    } catch (error) {
+      console.error('Google callback error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        url: error.config?.url
+      });
+      throw error;
     }
-
-    // Store token and user
-    localStorage.setItem('authToken', response.data.token);
-    setUser(response.data.user);
-    return response.data;
   };
 
   // Sign out

@@ -21,6 +21,51 @@ api.interceptors.request.use((config) => {
   return Promise.reject(error);
 });
 
+// Handle response errors globally
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Handle network errors
+    if (!error.response) {
+      console.error('Network Error:', error.message);
+      return Promise.reject({
+        message: 'Network error. Please check your internet connection.',
+        isNetworkError: true
+      });
+    }
+
+    // Handle authentication errors
+    if (error.response.status === 401) {
+      // Clear token and redirect to login
+      localStorage.removeItem('authToken');
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
+      return Promise.reject({
+        message: 'Session expired. Please log in again.',
+        isAuthError: true
+      });
+    }
+
+    // Handle server errors
+    if (error.response.status >= 500) {
+      console.error('Server Error:', error.response.data);
+      return Promise.reject({
+        message: 'Server error. Please try again later.',
+        isServerError: true,
+        status: error.response.status
+      });
+    }
+
+    // Handle other errors
+    return Promise.reject({
+      message: error.response.data?.message || error.message || 'An error occurred',
+      status: error.response.status,
+      data: error.response.data
+    });
+  }
+);
+
 // Session API
 export const sessionAPI = {
   getAll: () => api.get('/api/sessions'),
