@@ -1,9 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-// Auto-detect production vs development
-const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const API_URL = process.env.REACT_APP_API_URL || (isLocalhost ? 'http://localhost:5000' : 'https://whatsapp-platform-backend.onrender.com');
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const AuthContext = createContext({});
 
@@ -80,6 +78,34 @@ export const AuthProvider = ({ children }) => {
     return response.data;
   };
 
+  // Sign in with Google
+  const signInWithGoogle = async () => {
+    // Get Google auth URL from backend
+    const response = await axios.get(`${API_URL}/api/auth/google`);
+    
+    if (response.data.success) {
+      // Redirect to Google OAuth
+      window.location.href = response.data.url;
+    } else {
+      throw new Error('Failed to initiate Google login');
+    }
+  };
+
+  // Handle Google OAuth callback
+  const handleGoogleCallback = async (code) => {
+    const response = await axios.post(`${API_URL}/api/auth/google/callback`, {
+      code
+    });
+
+    if (!response.data.success) {
+      throw new Error(response.data.message);
+    }
+
+    // Store token and user
+    localStorage.setItem('authToken', response.data.token);
+    setUser(response.data.user);
+    return response.data;
+  };
 
   // Sign out
   const signOut = async () => {
@@ -123,6 +149,8 @@ export const AuthProvider = ({ children }) => {
     loading,
     signUp,
     signIn,
+    signInWithGoogle,
+    handleGoogleCallback,
     signOut,
     resetPassword,
     updatePassword,

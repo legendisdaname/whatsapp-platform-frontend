@@ -6,11 +6,10 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../components/ui/Dialog';
 import { MessageSquare, Mail, Lock, Shield, FileText, AlertCircle } from 'lucide-react';
-import Logo from '../components/Logo';
 
 function Login() {
   const navigate = useNavigate();
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, signInWithGoogle } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     email: '',
@@ -48,55 +47,70 @@ function Login() {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      await signInWithGoogle();
+      // Supabase will handle the redirect
+    } catch (error) {
+      console.error('Google login error:', error);
+      setError(error.message || 'Google login failed. Please try again.');
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-white flex">
+    <div className="min-h-screen bg-background flex">
       {/* Left Side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gray-50 p-12 flex-col justify-between">
-        <div className="flex items-center">
-          <Logo size="large" showText={true} variant="default" />
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary to-primary/80 p-12 flex-col justify-between text-primary-foreground">
+        <div className="flex items-center gap-2">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-foreground/10 backdrop-blur">
+            <MessageSquare className="h-6 w-6" />
+          </div>
+          <span className="text-xl font-bold">WhatsApp Platform</span>
         </div>
 
         <div className="space-y-6">
-          <h1 className="text-4xl font-bold leading-tight text-gray-900">
+          <h1 className="text-4xl font-bold leading-tight">
             Welcome to WhatsApp Platform
           </h1>
-          <p className="text-lg text-gray-600 max-w-md">
+          <p className="text-lg text-primary-foreground/90 max-w-md">
             Manage multiple WhatsApp sessions, automate messaging, and connect with your customers efficiently.
           </p>
           
           <div className="space-y-4 pt-8">
             <div className="flex items-start gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-                <MessageSquare className="h-4 w-4 text-primary" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-foreground/20">
+                <MessageSquare className="h-4 w-4" />
               </div>
               <div>
-                <h3 className="font-semibold mb-1 text-gray-900">Multi-Session Support</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="font-semibold mb-1">Multi-Session Support</h3>
+                <p className="text-sm text-primary-foreground/80">
                   Manage multiple WhatsApp accounts simultaneously
                 </p>
               </div>
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-foreground/20">
                 🤖
               </div>
               <div>
-                <h3 className="font-semibold mb-1 text-gray-900">Automated Messaging</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="font-semibold mb-1">Automated Messaging</h3>
+                <p className="text-sm text-primary-foreground/80">
                   Create bots and schedule messages automatically
                 </p>
               </div>
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-foreground/20">
                 👥
               </div>
               <div>
-                <h3 className="font-semibold mb-1 text-gray-900">Contact Management</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="font-semibold mb-1">Contact Management</h3>
+                <p className="text-sm text-primary-foreground/80">
                   Organize contacts into groups for easy targeting
                 </p>
               </div>
@@ -104,29 +118,33 @@ function Login() {
           </div>
         </div>
 
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-primary-foreground/70">
           © 2025 WhatsApp Platform. All rights reserved.
         </div>
       </div>
 
       {/* Right Side - Login Form */}
-      <div className="flex-1 flex flex-col justify-between p-4 sm:p-8 bg-white">
+      <div className="flex-1 flex flex-col justify-between p-4 sm:p-8 bg-gradient-to-br from-background to-accent/20">
         <div className="flex-1 flex items-center justify-center">
           <div className="w-full max-w-md">
-            <Card className="border border-gray-200 shadow-sm bg-white">
+            <Card className="border-0 shadow-none backdrop-blur">
             <CardHeader className="space-y-4 pb-8 pt-8">
               {/* Mobile Logo with Animation */}
               <div className="flex items-center justify-center lg:hidden mb-2">
-                <Logo size="large" showText={false} variant="icon-only" />
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground animate-in zoom-in-50 duration-500">
+                  <MessageSquare className="h-8 w-8" />
+                </div>
               </div>
               
-              {/* Title */}
-              <CardTitle className="text-3xl font-bold text-center lg:text-left text-gray-900">
-                {isLogin ? 'Welcome back' : 'Create account'}
+              {/* Title with Gradient */}
+              <CardTitle className="text-3xl font-bold text-center lg:text-left">
+                <span className="bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent">
+                  {isLogin ? 'Welcome back' : 'Create account'}
+                </span>
               </CardTitle>
               
               {/* Subtitle with Animation */}
-              <CardDescription className="text-center lg:text-left text-base text-gray-600">
+              <CardDescription className="text-center lg:text-left text-base">
                 {isLogin ? (
                   <>
                     Don't have an account?{' '}
@@ -247,6 +265,46 @@ function Login() {
                 )}
               </Button>
 
+              {/* Elegant Divider */}
+              <div className="relative my-8">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-border/50" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-4 text-muted-foreground font-semibold tracking-wider">
+                    Or continue with
+                  </span>
+                </div>
+              </div>
+
+              {/* Google Login Button - Enhanced */}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleGoogleLogin}
+                disabled={loading}
+                className="w-full h-12 font-medium hover:bg-accent transition-all hover:scale-[1.01] active:scale-[0.99] border-2 hover:border-primary/20"
+              >
+                <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
+                  <path
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                    fill="#4285F4"
+                  />
+                  <path
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                    fill="#34A853"
+                  />
+                  <path
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                    fill="#FBBC05"
+                  />
+                  <path
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                    fill="#EA4335"
+                  />
+                </svg>
+                <span className="text-base">Continue with Google</span>
+              </Button>
               </CardContent>
             </form>
           </Card>
@@ -255,7 +313,7 @@ function Login() {
 
         {/* Terms Notice - Bottom of Page */}
         <div className="w-full">
-          <p className="text-xs text-center text-gray-500 px-4 py-4 leading-relaxed">
+          <p className="text-xs text-center text-muted-foreground px-4 py-4 leading-relaxed">
             By clicking continue, you agree to our{' '}
             <button
               type="button"

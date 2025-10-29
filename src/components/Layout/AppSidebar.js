@@ -21,7 +21,6 @@ import {
   Menu
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import Logo from '../Logo';
 
 const AppSidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse, onLogout }) => {
   const location = useLocation();
@@ -90,13 +89,23 @@ const AppSidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse, onLogout }
           isCollapsed ? "justify-center" : "justify-between"
         )}>
           {!isCollapsed && (
-            <Link to="/" className="flex items-center">
-              <Logo size="default" showText={true} variant="sidebar" />
+            <Link to="/" className="flex items-center space-x-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                <MessageSquare className="h-5 w-5" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm font-semibold text-foreground">
+                  WhatsApp Platform
+                </span>
+                <span className="text-xs text-muted-foreground">Enterprise</span>
+              </div>
             </Link>
           )}
           
           {isCollapsed && (
-            <Logo size="default" showText={false} variant="icon-only" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <MessageSquare className="h-5 w-5" />
+            </div>
           )}
 
           {/* Collapse button - desktop only */}

@@ -113,31 +113,31 @@ This creates an optimized production build in the `build/` folder.
 
 ### Vercel (Recommended)
 
-See [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) for complete deployment guide.
-
-**Quick Steps**:
-1. Push code to GitHub
-2. Connect repository to Vercel
-3. Set environment variables:
-   - `REACT_APP_API_URL=https://whatsapp-platform-backend.onrender.com`
-4. Deploy!
-
-**Or use Vercel CLI**:
+1. Install Vercel CLI:
 ```bash
 npm i -g vercel
+```
+
+2. Deploy:
+```bash
 vercel
 ```
 
-### Environment Variables (Required)
+### Netlify
 
-Set these in your deployment platform:
-- `REACT_APP_API_URL` - Backend API URL (required)
+1. Build the project:
+```bash
+npm run build
+```
 
-Optional:
-- `REACT_APP_SUPABASE_URL` - Supabase URL (if using Supabase)
-- `REACT_APP_SUPABASE_ANON_KEY` - Supabase anon key (if using Supabase)
+2. Deploy the `build/` folder to Netlify
 
-See `.env.example` for reference.
+### Environment Variables
+
+Don't forget to set environment variables in your deployment platform:
+- `REACT_APP_API_URL`
+- `REACT_APP_SUPABASE_URL`
+- `REACT_APP_SUPABASE_ANON_KEY`
 
 ## 🎯 Features
 

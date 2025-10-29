@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Menu, Bell, Search, X, Sun, Moon } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import Logo from '../Logo';
 
 const Header = ({ onMenuClick }) => {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -60,9 +59,9 @@ const Header = ({ onMenuClick }) => {
         <Menu className="h-5 w-5" />
       </button>
 
-      {/* Logo/Title */}
-      <div className="flex-1 hidden md:flex items-center">
-        <Logo size="default" showText={true} variant="header" />
+      {/* Logo/Title - Optional */}
+      <div className="flex-1">
+        <h2 className="text-lg font-semibold hidden md:block">WhatsApp Platform</h2>
       </div>
 
       {/* Right side actions */}

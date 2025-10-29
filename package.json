@@ -1,6 +1,6 @@
 {
   "name": "whatsapp-platform-frontend",
-  "version": "1.0.1",
+  "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
@@ -18,11 +18,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "version:patch": "npm version patch --no-git-tag-version",
-    "version:minor": "npm version minor --no-git-tag-version",
-    "version:major": "npm version major --no-git-tag-version",
-    "predeploy": "npm run version:patch"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
