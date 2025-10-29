@@ -83,8 +83,8 @@ function Contacts() {
     try {
       setLoading(true);
       const [contactsRes, groupsRes] = await Promise.all([
-        fetch(`${process.env.REACT_APP_API_URL}/api/contacts?session_id=${selectedSession}`),
-        fetch(`${process.env.REACT_APP_API_URL}/api/contacts/groups?session_id=${selectedSession}`)
+        fetch(`${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api/contacts?session_id=${selectedSession}`),
+        fetch(`${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api/contacts/groups?session_id=${selectedSession}`)
       ]);
       
       const contactsData = await contactsRes.json();
@@ -102,7 +102,7 @@ function Contacts() {
   const createContact = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/contacts`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api/contacts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -129,7 +129,7 @@ function Contacts() {
   const deleteContact = async (id) => {
     if (!window.confirm('Delete this contact?')) return;
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/contacts/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api/contacts/${id}`, { method: 'DELETE' });
       const data = await response.json();
       if (data.success) {
         fetchData();
@@ -144,7 +144,7 @@ function Contacts() {
   const createGroup = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/contacts/groups`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api/contacts/groups`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -171,7 +171,7 @@ function Contacts() {
   const deleteGroup = async (id) => {
     if (!window.confirm('Delete this group? (Contacts will remain)')) return;
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/contacts/groups/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api/contacts/groups/${id}`, { method: 'DELETE' });
       const data = await response.json();
       if (data.success) {
         fetchData();
@@ -193,7 +193,7 @@ function Contacts() {
       formData.append('file', importFile);
       formData.append('session_id', selectedSession);
       
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/import/contacts`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api/import/contacts`, {
         method: 'POST',
         body: formData
       });

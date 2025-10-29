@@ -622,7 +622,7 @@ function Settings() {
                         <p className="font-semibold text-foreground mb-1">Example with cURL:</p>
                         <code className="block bg-background p-3 rounded border text-xs overflow-x-auto">
                           curl -H "x-api-key: {showApiKey ? apiKey : 'wp_live_••••••••'}" \<br/>
-                          &nbsp;&nbsp;http://localhost:5000/api/sessions
+                          &nbsp;&nbsp;{process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api/sessions
                         </code>
                       </div>
                     </div>
@@ -818,7 +818,7 @@ function Settings() {
                     </a>
 
                     <a
-                      href={`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api-docs`}
+                      href={`${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api-docs`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-4 border-2 rounded-lg hover:border-primary transition-all group"
@@ -847,7 +847,7 @@ function Settings() {
                           <span className="font-medium text-sm">Base URL</span>
                         </div>
                         <code className="text-xs bg-background px-2 py-1 rounded block">
-                          {process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api
+                          {process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api
                         </code>
                       </div>
 
@@ -937,7 +937,7 @@ function Settings() {
                           size="sm"
                           onClick={() => {
                             const code = `curl -H "x-api-key: ${showApiKey && apiKey ? apiKey : 'YOUR_API_KEY'}" \\
-  ${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/sessions`;
+  ${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api/sessions`;
                             navigator.clipboard.writeText(code);
                             showMessage('success', 'Code copied to clipboard!');
                           }}
@@ -949,7 +949,7 @@ function Settings() {
                       <pre className="text-xs overflow-x-auto">
                         <code className="text-foreground">
 {`curl -H "x-api-key: ${showApiKey && apiKey ? apiKey : 'YOUR_API_KEY'}" \\
-  ${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/sessions`}
+  ${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api/sessions`}
                         </code>
                       </pre>
                     </div>
@@ -963,7 +963,7 @@ function Settings() {
                           onClick={() => {
                             const code = `const axios = require('axios');
 
-axios.get('${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/sessions', {
+axios.get('${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api/sessions', {
   headers: {
     'x-api-key': '${showApiKey && apiKey ? apiKey : 'YOUR_API_KEY'}'
   }
@@ -982,7 +982,7 @@ axios.get('${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/sessi
                         <code className="text-foreground">
 {`const axios = require('axios');
 
-axios.get('${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/sessions', {
+axios.get('${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api/sessions', {
   headers: {
     'x-api-key': '${showApiKey && apiKey ? apiKey : 'YOUR_API_KEY'}'
   }

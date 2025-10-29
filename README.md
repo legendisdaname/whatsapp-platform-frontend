@@ -11,7 +11,7 @@ npm install
 
 2. Create `.env` file:
 ```env
-REACT_APP_API_URL=http://localhost:5000
+REACT_APP_API_URL=https://whatsapp-platform-backend.onrender.com
 REACT_APP_SUPABASE_URL=your_supabase_url
 REACT_APP_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```

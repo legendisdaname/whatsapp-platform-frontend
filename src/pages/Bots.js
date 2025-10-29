@@ -67,7 +67,7 @@ function Bots() {
       
       const allSessions = sessionsResponse.data.sessions || [];
       if (allSessions.length > 0) {
-        const groupsResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/contacts/groups`);
+        const groupsResponse = await fetch(`${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api/contacts/groups`);
         const groupsData = await groupsResponse.json();
         setGroups(groupsData.groups || []);
       }

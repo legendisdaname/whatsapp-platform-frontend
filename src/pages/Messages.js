@@ -74,7 +74,7 @@ function Messages() {
       const [sentResponse, receivedResponse, groupsResponse] = await Promise.all([
         messageAPI.getHistory(selectedSession),
         messageAPI.getReceived(selectedSession),
-        fetch(`${process.env.REACT_APP_API_URL}/api/contacts/groups?session_id=${selectedSession}`)
+        fetch(`${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api/contacts/groups?session_id=${selectedSession}`)
       ]);
       
       setMessageHistory(sentResponse.data.messages || []);
@@ -103,7 +103,7 @@ function Messages() {
         }
         
         const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/contacts/groups/${selectedGroupId}/phone-numbers`
+          `${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api/contacts/groups/${selectedGroupId}/phone-numbers`
         );
         const data = await response.json();
         
