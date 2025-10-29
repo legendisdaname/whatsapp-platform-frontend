@@ -343,63 +343,51 @@ function Settings() {
                 </CardHeader>
                 <form onSubmit={handlePasswordChange}>
                   <CardContent className="space-y-4">
-                    {user?.provider === 'google' ? (
-                      <div className="p-4 bg-accent rounded-lg">
-                        <p className="text-sm text-muted-foreground">
-                          You signed in with Google. Password change is not available for Google accounts.
-                        </p>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="space-y-2">
-                          <label className="text-sm font-semibold">Current Password</label>
-                          <Input
-                            type="password"
-                            value={passwordForm.currentPassword}
-                            onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
-                            placeholder="Enter current password"
-                            icon={<Lock className="h-4 w-4" />}
-                            required
-                          />
-                        </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold">Current Password</label>
+                      <Input
+                        type="password"
+                        value={passwordForm.currentPassword}
+                        onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+                        placeholder="Enter current password"
+                        icon={<Lock className="h-4 w-4" />}
+                        required
+                      />
+                    </div>
 
-                        <div className="space-y-2">
-                          <label className="text-sm font-semibold">New Password</label>
-                          <Input
-                            type="password"
-                            value={passwordForm.newPassword}
-                            onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
-                            placeholder="Enter new password"
-                            icon={<Key className="h-4 w-4" />}
-                            required
-                          />
-                        </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold">New Password</label>
+                      <Input
+                        type="password"
+                        value={passwordForm.newPassword}
+                        onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                        placeholder="Enter new password"
+                        icon={<Key className="h-4 w-4" />}
+                        required
+                      />
+                    </div>
 
-                        <div className="space-y-2">
-                          <label className="text-sm font-semibold">Confirm New Password</label>
-                          <Input
-                            type="password"
-                            value={passwordForm.confirmPassword}
-                            onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
-                            placeholder="Confirm new password"
-                            icon={<Key className="h-4 w-4" />}
-                            required
-                          />
-                          <p className="text-xs text-muted-foreground">
-                            Password must be at least 8 characters
-                          </p>
-                        </div>
-                      </>
-                    )}
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold">Confirm New Password</label>
+                      <Input
+                        type="password"
+                        value={passwordForm.confirmPassword}
+                        onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                        placeholder="Confirm new password"
+                        icon={<Key className="h-4 w-4" />}
+                        required
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Password must be at least 8 characters
+                      </p>
+                    </div>
                   </CardContent>
-                  {user?.provider !== 'google' && (
-                    <CardFooter>
-                      <Button type="submit" disabled={saving}>
-                        <Lock className="mr-2 h-4 w-4" />
-                        {saving ? 'Updating...' : 'Update Password'}
-                      </Button>
-                    </CardFooter>
-                  )}
+                  <CardFooter>
+                    <Button type="submit" disabled={saving}>
+                      <Lock className="mr-2 h-4 w-4" />
+                      {saving ? 'Updating...' : 'Update Password'}
+                    </Button>
+                  </CardFooter>
                 </form>
               </Card>
 

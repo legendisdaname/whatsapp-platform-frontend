@@ -80,46 +80,6 @@ export const AuthProvider = ({ children }) => {
     return response.data;
   };
 
-  // Sign in with Google
-  const signInWithGoogle = async () => {
-    // Get Google auth URL from backend
-    const response = await axios.get(`${API_URL}/api/auth/google`);
-    
-    if (response.data.success) {
-      // Redirect to Google OAuth
-      window.location.href = response.data.url;
-    } else {
-      throw new Error('Failed to initiate Google login');
-    }
-  };
-
-  // Handle Google OAuth callback
-  const handleGoogleCallback = async (code) => {
-    try {
-      console.log('Calling backend at:', `${API_URL}/api/auth/google/callback`);
-      
-      const response = await axios.post(`${API_URL}/api/auth/google/callback`, {
-        code
-      });
-
-      if (!response.data.success) {
-        throw new Error(response.data.message);
-      }
-
-      // Store token and user
-      localStorage.setItem('authToken', response.data.token);
-      setUser(response.data.user);
-      return response.data;
-    } catch (error) {
-      console.error('Google callback error details:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-        url: error.config?.url
-      });
-      throw error;
-    }
-  };
 
   // Sign out
   const signOut = async () => {
@@ -163,8 +123,6 @@ export const AuthProvider = ({ children }) => {
     loading,
     signUp,
     signIn,
-    signInWithGoogle,
-    handleGoogleCallback,
     signOut,
     resetPassword,
     updatePassword,
