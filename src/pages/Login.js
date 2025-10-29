@@ -62,53 +62,53 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-white flex">
       {/* Left Side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary to-primary/80 p-12 flex-col justify-between text-primary-foreground">
+      <div className="hidden lg:flex lg:w-1/2 bg-gray-50 p-12 flex-col justify-between">
         <div className="flex items-center">
-          <Logo size="large" showText={true} variant="default" className="text-primary-foreground" />
+          <Logo size="large" showText={true} variant="default" />
         </div>
 
         <div className="space-y-6">
-          <h1 className="text-4xl font-bold leading-tight">
+          <h1 className="text-4xl font-bold leading-tight text-gray-900">
             Welcome to WhatsApp Platform
           </h1>
-          <p className="text-lg text-primary-foreground/90 max-w-md">
+          <p className="text-lg text-gray-600 max-w-md">
             Manage multiple WhatsApp sessions, automate messaging, and connect with your customers efficiently.
           </p>
           
           <div className="space-y-4 pt-8">
             <div className="flex items-start gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-foreground/20">
-                <MessageSquare className="h-4 w-4" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+                <MessageSquare className="h-4 w-4 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold mb-1">Multi-Session Support</h3>
-                <p className="text-sm text-primary-foreground/80">
+                <h3 className="font-semibold mb-1 text-gray-900">Multi-Session Support</h3>
+                <p className="text-sm text-gray-600">
                   Manage multiple WhatsApp accounts simultaneously
                 </p>
               </div>
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-foreground/20">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
                 🤖
               </div>
               <div>
-                <h3 className="font-semibold mb-1">Automated Messaging</h3>
-                <p className="text-sm text-primary-foreground/80">
+                <h3 className="font-semibold mb-1 text-gray-900">Automated Messaging</h3>
+                <p className="text-sm text-gray-600">
                   Create bots and schedule messages automatically
                 </p>
               </div>
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-foreground/20">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
                 👥
               </div>
               <div>
-                <h3 className="font-semibold mb-1">Contact Management</h3>
-                <p className="text-sm text-primary-foreground/80">
+                <h3 className="font-semibold mb-1 text-gray-900">Contact Management</h3>
+                <p className="text-sm text-gray-600">
                   Organize contacts into groups for easy targeting
                 </p>
               </div>
@@ -116,33 +116,29 @@ function Login() {
           </div>
         </div>
 
-        <div className="text-sm text-primary-foreground/70">
+        <div className="text-sm text-gray-500">
           © 2025 WhatsApp Platform. All rights reserved.
         </div>
       </div>
 
       {/* Right Side - Login Form */}
-      <div className="flex-1 flex flex-col justify-between p-4 sm:p-8 bg-gradient-to-br from-background to-accent/20">
+      <div className="flex-1 flex flex-col justify-between p-4 sm:p-8 bg-white">
         <div className="flex-1 flex items-center justify-center">
           <div className="w-full max-w-md">
-            <Card className="border-0 shadow-none backdrop-blur">
+            <Card className="border border-gray-200 shadow-sm bg-white">
             <CardHeader className="space-y-4 pb-8 pt-8">
               {/* Mobile Logo with Animation */}
               <div className="flex items-center justify-center lg:hidden mb-2">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground animate-in zoom-in-50 duration-500">
-                  <MessageSquare className="h-8 w-8" />
-                </div>
+                <Logo size="large" showText={false} variant="icon-only" />
               </div>
               
-              {/* Title with Gradient */}
-              <CardTitle className="text-3xl font-bold text-center lg:text-left">
-                <span className="bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent">
-                  {isLogin ? 'Welcome back' : 'Create account'}
-                </span>
+              {/* Title */}
+              <CardTitle className="text-3xl font-bold text-center lg:text-left text-gray-900">
+                {isLogin ? 'Welcome back' : 'Create account'}
               </CardTitle>
               
               {/* Subtitle with Animation */}
-              <CardDescription className="text-center lg:text-left text-base">
+              <CardDescription className="text-center lg:text-left text-base text-gray-600">
                 {isLogin ? (
                   <>
                     Don't have an account?{' '}
@@ -269,7 +265,7 @@ function Login() {
                   <span className="w-full border-t border-border/50" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-4 text-muted-foreground font-semibold tracking-wider">
+                  <span className="bg-white px-4 text-gray-500 font-semibold tracking-wider">
                     Or continue with
                   </span>
                 </div>
@@ -311,7 +307,7 @@ function Login() {
 
         {/* Terms Notice - Bottom of Page */}
         <div className="w-full">
-          <p className="text-xs text-center text-muted-foreground px-4 py-4 leading-relaxed">
+          <p className="text-xs text-center text-gray-500 px-4 py-4 leading-relaxed">
             By clicking continue, you agree to our{' '}
             <button
               type="button"
