@@ -287,8 +287,8 @@ function Settings() {
                     <div className="space-y-1">
                       <h3 className="font-semibold">{user?.name || 'User'}</h3>
                       <p className="text-sm text-muted-foreground">{user?.email}</p>
-                      <Badge variant={user?.provider === 'google' ? 'default' : 'secondary'}>
-                        {user?.provider === 'google' ? 'Google Account' : 'Email Account'}
+                      <Badge variant="secondary">
+                        Email Account
                       </Badge>
                     </div>
                   </div>

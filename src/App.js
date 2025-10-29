@@ -4,7 +4,6 @@ import { useAuth } from './contexts/AuthContext';
 import Layout from './components/Layout/Layout';
 import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
-import GoogleCallback from './pages/GoogleCallback';
 import Dashboard from './pages/Dashboard';
 import Sessions from './pages/Sessions';
 import Bots from './pages/Bots';
@@ -34,7 +33,6 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/auth/google/callback" element={<GoogleCallback />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       ) : (
