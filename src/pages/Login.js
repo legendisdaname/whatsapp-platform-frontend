@@ -6,6 +6,7 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../components/ui/Dialog';
 import { MessageSquare, Mail, Lock, Shield, FileText, AlertCircle } from 'lucide-react';
+import Logo from '../components/Logo';
 
 function Login() {
   const navigate = useNavigate();
@@ -64,11 +65,8 @@ function Login() {
     <div className="min-h-screen bg-background flex">
       {/* Left Side - Branding */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary to-primary/80 p-12 flex-col justify-between text-primary-foreground">
-        <div className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-foreground/10 backdrop-blur">
-            <MessageSquare className="h-6 w-6" />
-          </div>
-          <span className="text-xl font-bold">WhatsApp Platform</span>
+        <div className="flex items-center">
+          <Logo size="large" showText={true} variant="default" className="text-primary-foreground" />
         </div>
 
         <div className="space-y-6">
