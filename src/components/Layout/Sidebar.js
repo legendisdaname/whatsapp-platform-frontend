@@ -24,7 +24,7 @@ const Sidebar = ({ isOpen, onClose }) => {
     { name: 'Bots', href: '/bots', icon: Bot },
     { name: 'Messages', href: '/messages', icon: Send },
     { name: 'WooCommerce', href: '/woocommerce', icon: ShoppingCart },
-    { name: 'API Docs', href: '/api-docs', icon: BookOpen },
+    { name: 'API Docs', href: '/api', icon: BookOpen },
   ];
 
   const bottomNavigation = [
@@ -54,11 +54,15 @@ const Sidebar = ({ isOpen, onClose }) => {
         {/* Logo Section */}
         <div className="flex h-16 items-center justify-between border-b border-border px-6">
           <Link to="/" className="flex items-center space-x-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <MessageSquare className="h-5 w-5" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary p-1.5 aspect-square">
+              <img 
+                src="/logo-platform.svg" 
+                alt="Streamfinitytv WhatsApp Logo" 
+                className="h-full w-full object-contain"
+              />
             </div>
             <span className="text-lg font-semibold text-foreground">
-              WhatsApp Platform
+              Streamfinitytv WhatsApp
             </span>
           </Link>
           

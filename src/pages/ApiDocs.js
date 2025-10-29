@@ -131,7 +131,7 @@ function ApiDocs() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">API Documentation</h1>
           <p className="text-muted-foreground">
-            Complete reference for the WhatsApp Platform API
+            Complete reference for the Streamfinitytv WhatsApp API
           </p>
         </div>
         <Button variant="outline" onClick={() => window.open('http://localhost:5000/api-docs', '_blank')}>
@@ -197,7 +197,7 @@ function ApiDocs() {
             <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Welcome to the WhatsApp Platform API</CardTitle>
+                  <CardTitle>Welcome to the Streamfinitytv WhatsApp API</CardTitle>
                   <CardDescription>
                     RESTful API for managing WhatsApp accounts, sending messages, and automating workflows
                   </CardDescription>

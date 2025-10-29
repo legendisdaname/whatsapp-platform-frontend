@@ -61,21 +61,29 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="h-screen bg-background flex overflow-hidden">
       {/* Left Side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary to-primary/80 p-12 flex-col justify-between text-primary-foreground">
-        <div className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-foreground/10 backdrop-blur">
-            <MessageSquare className="h-6 w-6" />
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary to-primary/80 p-12 flex-col justify-between text-primary-foreground relative overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary-foreground/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary-foreground/5 rounded-full blur-3xl -ml-48 -mb-48"></div>
+        
+        <div className="relative z-10 flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-foreground/10 dark:bg-primary-foreground/20 p-2.5 shadow-lg aspect-square">
+            <img 
+              src="/logo-platform.svg" 
+              alt="Streamfinitytv WhatsApp Logo" 
+              className="h-full w-full object-contain opacity-90 dark:opacity-100"
+            />
           </div>
-          <span className="text-xl font-bold">WhatsApp Platform</span>
+          <span className="text-xl font-bold tracking-tight">Streamfinitytv WhatsApp</span>
         </div>
 
-        <div className="space-y-6">
-          <h1 className="text-4xl font-bold leading-tight">
-            Welcome to WhatsApp Platform
+        <div className="space-y-6 relative z-10">
+          <h1 className="text-5xl font-bold leading-tight tracking-tight">
+            Welcome to Streamfinitytv WhatsApp
           </h1>
-          <p className="text-lg text-primary-foreground/90 max-w-md">
+          <p className="text-lg text-primary-foreground/90 max-w-md leading-relaxed">
             Manage multiple WhatsApp sessions, automate messaging, and connect with your customers efficiently.
           </p>
           
@@ -118,26 +126,46 @@ function Login() {
           </div>
         </div>
 
-        <div className="text-sm text-primary-foreground/70">
-          © 2025 WhatsApp Platform. All rights reserved.
+        <div className="text-sm text-primary-foreground/70 relative z-10">
+          © 2025 Streamfinitytv WhatsApp. All rights reserved.
         </div>
       </div>
 
       {/* Right Side - Login Form */}
-      <div className="flex-1 flex flex-col justify-between p-4 sm:p-8 bg-gradient-to-br from-background to-accent/20">
-        <div className="flex-1 flex items-center justify-center">
+      <div className="flex-1 flex flex-col justify-between p-4 sm:p-8 bg-gradient-to-br from-background via-background to-accent/10 relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -mr-48 -mt-48 opacity-50"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -ml-32 -mb-32 opacity-50"></div>
+        
+        <div className="flex-1 flex items-center justify-center relative z-10 overflow-y-auto py-4">
           <div className="w-full max-w-md">
-            <Card className="border-0 shadow-none backdrop-blur">
-            <CardHeader className="space-y-4 pb-8 pt-8">
+            <Card className="border border-border/50 shadow-2xl backdrop-blur-sm bg-card/95">
+            <CardHeader className="space-y-3 pb-4 pt-6 px-6 sm:px-8">
               {/* Mobile Logo with Animation */}
-              <div className="flex items-center justify-center lg:hidden mb-2">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground animate-in zoom-in-50 duration-500">
-                  <MessageSquare className="h-8 w-8" />
+              <div className="flex items-center justify-center lg:hidden mb-4">
+                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary p-3 shadow-lg animate-in zoom-in-50 duration-500 aspect-square">
+                  <img 
+                    src="/logo-platform.svg" 
+                    alt="Streamfinitytv WhatsApp Logo" 
+                    className="h-full w-full object-contain"
+                  />
                 </div>
               </div>
               
+              {/* Desktop Logo above title */}
+              <div className="hidden lg:flex items-center gap-3 mb-6">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary p-2 aspect-square">
+                  <img 
+                    src="/logo-platform.svg" 
+                    alt="Streamfinitytv WhatsApp Logo" 
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+                <span className="text-lg font-semibold text-foreground">Streamfinitytv WhatsApp</span>
+              </div>
+              
               {/* Title with Gradient */}
-              <CardTitle className="text-3xl font-bold text-center lg:text-left">
+              <CardTitle className="text-3xl font-bold text-center lg:text-left mt-2">
                 <span className="bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent">
                   {isLogin ? 'Welcome back' : 'Create account'}
                 </span>
@@ -174,7 +202,7 @@ function Login() {
             </CardHeader>
 
             <form onSubmit={handleSubmit}>
-              <CardContent className="space-y-6 px-8">
+              <CardContent className="space-y-4 px-6 sm:px-8 pb-6">
                 {/* Error Message */}
                 {error && (
                   <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg flex items-start gap-2 animate-in slide-in-from-top-2 duration-300">
@@ -252,7 +280,7 @@ function Login() {
               {/* Submit Button with Enhanced Styling */}
               <Button 
                 type="submit" 
-                className="w-full h-12 text-base font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] mt-2" 
+                className="w-full h-12 text-base font-semibold transition-all hover:scale-[1.01] active:scale-[0.99] mt-4 shadow-lg hover:shadow-xl" 
                 disabled={loading}
               >
                 {loading ? (
@@ -312,8 +340,8 @@ function Login() {
         </div>
 
         {/* Terms Notice - Bottom of Page */}
-        <div className="w-full">
-          <p className="text-xs text-center text-muted-foreground px-4 py-4 leading-relaxed">
+        <div className="w-full shrink-0">
+          <p className="text-xs text-center text-muted-foreground px-4 py-2 leading-relaxed">
             By clicking continue, you agree to our{' '}
             <button
               type="button"
@@ -351,7 +379,7 @@ function Login() {
               <section>
                 <h3 className="font-semibold text-base mb-2">1. Acceptance of Terms</h3>
                 <p className="text-muted-foreground">
-                  By accessing and using WhatsApp Platform ("the Service"), you accept and agree to be bound by the terms and provision of this agreement.
+                  By accessing and using Streamfinitytv WhatsApp ("the Service"), you accept and agree to be bound by the terms and provision of this agreement.
                 </p>
               </section>
 
@@ -398,7 +426,7 @@ function Login() {
               <section>
                 <h3 className="font-semibold text-base mb-2">6. Limitation of Liability</h3>
                 <p className="text-muted-foreground">
-                  In no event shall WhatsApp Platform be liable for any damages arising out of the use or inability to use the Service.
+                  In no event shall Streamfinitytv WhatsApp be liable for any damages arising out of the use or inability to use the Service.
                 </p>
               </section>
 

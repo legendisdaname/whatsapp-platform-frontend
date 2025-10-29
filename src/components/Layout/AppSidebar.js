@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import {
@@ -8,13 +8,8 @@ import {
   Bot,
   Send,
   Settings,
-  ChevronRight,
-  ChevronDown,
   LogOut,
   User,
-  History,
-  Star,
-  FileText,
   HelpCircle,
   MessageCircle,
   ChevronLeft,
@@ -25,17 +20,6 @@ import { cn } from '../../lib/utils';
 const AppSidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse, onLogout }) => {
   const location = useLocation();
   const { user } = useAuth();
-  const [expandedGroups, setExpandedGroups] = useState({
-    platform: true,
-    projects: false
-  });
-
-  const toggleGroup = (group) => {
-    setExpandedGroups(prev => ({
-      ...prev,
-      [group]: !prev[group]
-    }));
-  };
 
   const mainNavigation = [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
@@ -45,20 +29,10 @@ const AppSidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse, onLogout }
     { name: 'Messages', href: '/messages', icon: Send },
   ];
 
-  const platformGroup = [
-    { name: 'History', href: '/history', icon: History },
-    { name: 'Starred', href: '/starred', icon: Star },
-    { name: 'Settings', href: '/settings', icon: Settings },
-  ];
-
-  const projectsGroup = [
-    { name: 'Documentation', href: '/docs', icon: FileText },
-    { name: 'API Reference', href: '/api', icon: FileText },
-  ];
-
   const bottomNavigation = [
     { name: 'Support', href: '/support', icon: HelpCircle },
     { name: 'Feedback', href: '/feedback', icon: MessageCircle },
+    { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -83,42 +57,37 @@ const AppSidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse, onLogout }
           isCollapsed ? "w-16" : "w-64"
         )}
       >
-        {/* Header with Logo and Collapse Button */}
+        {/* Header with Logo */}
         <div className={cn(
-          "flex h-16 items-center border-b border-border px-4",
-          isCollapsed ? "justify-center" : "justify-between"
+          "flex h-16 items-center justify-between border-b border-border px-4"
         )}>
-          {!isCollapsed && (
+          {!isCollapsed ? (
             <Link to="/" className="flex items-center space-x-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <MessageSquare className="h-5 w-5" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary p-1.5 aspect-square">
+                <img 
+                  src="/logo-platform.svg" 
+                  alt="Streamfinitytv WhatsApp Logo" 
+                  className="h-full w-full object-contain"
+                />
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-semibold text-foreground">
-                  WhatsApp Platform
+                  Streamfinitytv WhatsApp
                 </span>
                 <span className="text-xs text-muted-foreground">Enterprise</span>
               </div>
             </Link>
+          ) : (
+            <Link to="/" className="flex items-center justify-center w-full">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary p-1.5 aspect-square">
+                <img 
+                  src="/logo-platform.svg" 
+                  alt="Streamfinitytv WhatsApp Logo" 
+                  className="h-full w-full object-contain"
+                />
+              </div>
+            </Link>
           )}
-          
-          {isCollapsed && (
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <MessageSquare className="h-5 w-5" />
-            </div>
-          )}
-
-          {/* Collapse button - desktop only */}
-          <button
-            onClick={onToggleCollapse}
-            className="hidden lg:flex rounded-md p-1.5 hover:bg-accent"
-          >
-            {isCollapsed ? (
-              <ChevronRight className="h-4 w-4" />
-            ) : (
-              <ChevronLeft className="h-4 w-4" />
-            )}
-          </button>
 
           {/* Mobile close button */}
           <button
@@ -159,122 +128,40 @@ const AppSidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse, onLogout }
               })}
             </div>
 
-            {/* Platform Group */}
-            {!isCollapsed && (
-              <div className="space-y-1">
-                <button
-                  onClick={() => toggleGroup('platform')}
-                  className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                >
-                  <span>Platform</span>
-                  {expandedGroups.platform ? (
-                    <ChevronDown className="h-4 w-4" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4" />
-                  )}
-                </button>
-                
-                {expandedGroups.platform && (
-                  <div className="ml-4 space-y-1 border-l border-border pl-2">
-                    {platformGroup.map((item) => {
-                      const Icon = item.icon;
-                      const active = isActive(item.href);
-                      
-                      return (
-                        <Link
-                          key={item.name}
-                          to={item.href}
-                          onClick={() => window.innerWidth < 1024 && onClose()}
-                          className={cn(
-                            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
-                            active
-                              ? "bg-accent text-accent-foreground font-medium"
-                              : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                          )}
-                        >
-                          <Icon className="h-4 w-4" />
-                          <span>{item.name}</span>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Projects Group */}
-            {!isCollapsed && (
-              <div className="space-y-1">
-                <button
-                  onClick={() => toggleGroup('projects')}
-                  className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                >
-                  <span>Projects</span>
-                  {expandedGroups.projects ? (
-                    <ChevronDown className="h-4 w-4" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4" />
-                  )}
-                </button>
-                
-                {expandedGroups.projects && (
-                  <div className="ml-4 space-y-1 border-l border-border pl-2">
-                    {projectsGroup.map((item) => {
-                      const Icon = item.icon;
-                      const active = isActive(item.href);
-                      
-                      return (
-                        <Link
-                          key={item.name}
-                          to={item.href}
-                          onClick={() => window.innerWidth < 1024 && onClose()}
-                          className={cn(
-                            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
-                            active
-                              ? "bg-accent text-accent-foreground font-medium"
-                              : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                          )}
-                        >
-                          <Icon className="h-4 w-4" />
-                          <span>{item.name}</span>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
           </div>
         </nav>
 
         {/* Bottom Section */}
         <div className="border-t border-border">
           {/* Support/Feedback Links */}
-          {!isCollapsed && (
-            <div className="px-3 py-3 space-y-1">
-              {bottomNavigation.map((item) => {
-                const Icon = item.icon;
-                const active = isActive(item.href);
-                
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    onClick={() => window.innerWidth < 1024 && onClose()}
-                    className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
-                      active
-                        ? "bg-accent text-accent-foreground font-medium"
-                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                    )}
-                  >
-                    <Icon className="h-4 w-4" />
-                    <span>{item.name}</span>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
+          <div className={cn(
+            "px-3 py-3 space-y-1",
+            isCollapsed && "px-2"
+          )}>
+            {bottomNavigation.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.href);
+              
+              return (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  onClick={() => window.innerWidth < 1024 && onClose()}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    active
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                    isCollapsed && "justify-center px-2"
+                  )}
+                  title={isCollapsed ? item.name : undefined}
+                >
+                  <Icon className="h-5 w-5 shrink-0" />
+                  {!isCollapsed && <span>{item.name}</span>}
+                </Link>
+              );
+            })}
+          </div>
 
           {/* User Profile */}
           <div className={cn(
@@ -282,8 +169,21 @@ const AppSidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse, onLogout }
             isCollapsed && "flex justify-center"
           )}>
             {isCollapsed ? (
-              <button className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
-                <User className="h-4 w-4" />
+              <button 
+                className="flex h-10 w-10 items-center justify-center rounded-full hover:ring-2 hover:ring-primary/20 transition-all"
+                title={user?.name || user?.email || 'User'}
+              >
+                {user?.avatar_url ? (
+                  <img 
+                    src={user.avatar_url} 
+                    alt={user.name || user.email} 
+                    className="h-10 w-10 rounded-full object-cover border-2 border-border"
+                  />
+                ) : (
+                  <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold text-sm border-2 border-border">
+                    {user?.name ? user.name.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() || 'U'}
+                  </div>
+                )}
               </button>
             ) : (
               <div className="flex items-center gap-3 rounded-lg p-2 hover:bg-accent transition-colors cursor-pointer">

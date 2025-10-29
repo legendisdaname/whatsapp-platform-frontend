@@ -127,12 +127,16 @@ function Messages() {
         
         alert(`✅ Messages sent!\n\nSuccess: ${successCount}\nFailed: ${failCount}\nTotal: ${data.phoneNumbers.length}`);
       } else {
-        if (!recipientNumber) {
+        if (!recipientNumber || !recipientNumber.trim()) {
           alert('Please enter a phone number');
           return;
         }
         
-        await messageAPI.send(selectedSession, recipientNumber, messageText);
+        // Trim the recipient number before sending
+        const trimmedNumber = recipientNumber.trim();
+        console.log('Sending message to:', trimmedNumber);
+        
+        await messageAPI.send(selectedSession, trimmedNumber, messageText);
         alert('✅ Message sent successfully!');
       }
       
@@ -142,7 +146,15 @@ function Messages() {
       fetchMessages();
     } catch (error) {
       console.error('Error sending message:', error);
-      alert('❌ Failed to send message: ' + error.message);
+      console.error('Error response:', error.response?.data);
+      
+      // Show detailed error message
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          error.message || 
+                          'Failed to send message';
+      
+      alert(`❌ Failed to send message:\n\n${errorMessage}\n\nPlease check:\n- The session is connected\n- The phone number is correct\n- The number has at least 8 digits`);
     } finally {
       setSending(false);
     }
@@ -279,11 +291,11 @@ function Messages() {
                       type="text"
                       value={recipientNumber}
                       onChange={(e) => setRecipientNumber(e.target.value)}
-                      placeholder="e.g., 1234567890"
+                      placeholder="e.g., +212 665-927999 or +212 0655-927999"
                       required
                     />
                     <p className="text-xs text-muted-foreground">
-                      Enter phone number with country code (without +)
+                      Enter phone number with country code. Supports all formats worldwide: +212 665-927999, +212 0655-927999, 212665927999, etc. Leading zeros are automatically handled. The @c.us will be added automatically.
                     </p>
                   </div>
                 ) : (

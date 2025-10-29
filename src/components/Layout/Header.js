@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Menu, Bell, Search, X, Sun, Moon } from 'lucide-react';
+import { Menu, Bell, Search, X, Sun, Moon, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
-const Header = ({ onMenuClick }) => {
+const Header = ({ onMenuClick, isSidebarCollapsed, onToggleSidebar }) => {
   const [searchOpen, setSearchOpen] = useState(false);
   const searchInputRef = useRef(null);
   const [theme, setTheme] = useState(
@@ -59,9 +59,31 @@ const Header = ({ onMenuClick }) => {
         <Menu className="h-5 w-5" />
       </button>
 
-      {/* Logo/Title - Optional */}
-      <div className="flex-1">
-        <h2 className="text-lg font-semibold hidden md:block">WhatsApp Platform</h2>
+      {/* Desktop sidebar toggle button */}
+      {onToggleSidebar && (
+        <button
+          onClick={onToggleSidebar}
+          className="hidden lg:flex rounded-md p-2 hover:bg-accent transition-colors"
+          title={isSidebarCollapsed ? "Show sidebar" : "Hide sidebar"}
+        >
+          {isSidebarCollapsed ? (
+            <PanelLeftOpen className="h-5 w-5" />
+          ) : (
+            <PanelLeftClose className="h-5 w-5" />
+          )}
+        </button>
+      )}
+
+      {/* Logo/Title */}
+      <div className="flex-1 flex items-center gap-2">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary p-1.5 aspect-square hidden md:flex">
+          <img 
+            src="/logo-platform.svg" 
+            alt="Streamfinitytv WhatsApp Logo" 
+            className="h-full w-full object-contain"
+          />
+        </div>
+        <h2 className="text-lg font-semibold hidden md:block">Streamfinitytv WhatsApp</h2>
       </div>
 
       {/* Right side actions */}

@@ -1,4 +1,4 @@
-# WhatsApp Platform - Frontend
+# Streamfinitytv WhatsApp - Frontend
 
 React-based frontend for managing WhatsApp sessions, messages, and automated bots.
 

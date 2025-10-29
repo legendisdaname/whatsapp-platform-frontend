@@ -21,7 +21,11 @@ const Layout = ({ children, onLogout }) => {
       {/* Main content area */}
       <div className={`min-h-screen transition-all duration-300 ${sidebarCollapsed ? 'lg:pl-16' : 'lg:pl-64'}`}>
         {/* Header */}
-        <Header onMenuClick={() => setSidebarOpen(true)} />
+        <Header 
+          onMenuClick={() => setSidebarOpen(true)}
+          isSidebarCollapsed={sidebarCollapsed}
+          onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
+        />
 
         {/* Page content with padding for fixed footer */}
         <main className="pb-16">

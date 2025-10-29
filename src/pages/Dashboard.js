@@ -192,7 +192,7 @@ function Dashboard() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-muted-foreground">
-            Welcome back! Here's what's happening with your WhatsApp platform.
+            Welcome back! Here's what's happening with your Streamfinitytv WhatsApp.
           </p>
         </div>
         <Button onClick={fetchStats} variant="outline" size="sm">

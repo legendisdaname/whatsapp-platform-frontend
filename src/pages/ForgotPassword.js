@@ -42,7 +42,7 @@ function ForgotPassword() {
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-foreground/10 backdrop-blur">
             <MessageSquare className="h-6 w-6" />
           </div>
-          <span className="text-xl font-bold">WhatsApp Platform</span>
+          <span className="text-xl font-bold">Streamfinitytv WhatsApp</span>
         </div>
 
         <div className="space-y-6">
@@ -93,7 +93,7 @@ function ForgotPassword() {
         </div>
 
         <div className="text-sm text-primary-foreground/70">
-          © 2025 WhatsApp Platform. All rights reserved.
+          © 2025 Streamfinitytv WhatsApp. All rights reserved.
         </div>
       </div>
 

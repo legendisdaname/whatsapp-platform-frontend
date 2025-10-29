@@ -46,7 +46,7 @@ function App() {
             <Route path="/bots" element={<Bots />} />
             <Route path="/messages" element={<Messages />} />
             <Route path="/woocommerce" element={<WooCommerce />} />
-            <Route path="/api-docs" element={<ApiDocs />} />
+            <Route path="/api" element={<ApiDocs />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/login" element={<Navigate to="/" replace />} />
           </Routes>

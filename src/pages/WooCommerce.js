@@ -681,12 +681,12 @@ Thank you for shopping with us!`
                       // Alternative download method - direct file content
                       const pluginContent = `<?php
 /**
- * Plugin Name: WhatsApp Platform - Order Notifications
- * Plugin URI: https://whatsapp-platform.com
- * Description: Send automatic WhatsApp notifications for WooCommerce orders using WhatsApp Platform. Professional e-commerce messaging solution.
+ * Plugin Name: Streamfinitytv WhatsApp - Order Notifications
+ * Plugin URI: https://streamfinitytv.com
+ * Description: Send automatic WhatsApp notifications for WooCommerce orders using Streamfinitytv WhatsApp. Professional e-commerce messaging solution.
  * Version: 1.0.0
- * Author: WhatsApp Platform
- * Author URI: https://whatsapp-platform.com
+ * Author: Streamfinitytv WhatsApp
+ * Author URI: https://streamfinitytv.com
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Requires at least: 5.0
@@ -831,7 +831,7 @@ new WhatsApp_Order_Notifications();`;
               </li>
               <li className="flex items-start gap-2">
                 <span className="shrink-0">5.</span>
-                <span>The plugin will automatically connect to your WhatsApp Platform! ✅</span>
+                <span>The plugin will automatically connect to your Streamfinitytv WhatsApp! ✅</span>
               </li>
             </ol>
           </div>

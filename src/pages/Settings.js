@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../api/api';
+import { sessionAPI } from '../api/api';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
@@ -24,7 +25,19 @@ import {
   Eye,
   EyeOff,
   RefreshCw,
-  Loader2
+  Loader2,
+  BookOpen,
+  ExternalLink,
+  Code,
+  Send,
+  MessageSquare,
+  Bot,
+  Users,
+  QrCode,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Plus
 } from 'lucide-react';
 
 function Settings() {
@@ -63,6 +76,10 @@ function Settings() {
   const [loadingApiKey, setLoadingApiKey] = useState(false);
   const [generatingApiKey, setGeneratingApiKey] = useState(false);
   
+  // Sessions
+  const [sessions, setSessions] = useState([]);
+  const [loadingSessions, setLoadingSessions] = useState(false);
+  
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
@@ -73,6 +90,7 @@ function Settings() {
         email: user.email || ''
       });
       fetchApiKey();
+      fetchSessions();
     }
   }, [user]);
 
@@ -90,6 +108,23 @@ function Settings() {
     }
   };
 
+  const fetchSessions = async () => {
+    setLoadingSessions(true);
+    try {
+      const response = await sessionAPI.getAll();
+      setSessions(response.data.sessions || []);
+    } catch (error) {
+      console.error('Error fetching sessions:', error);
+    } finally {
+      setLoadingSessions(false);
+    }
+  };
+
+  const copySessionId = (sessionId) => {
+    navigator.clipboard.writeText(sessionId);
+    showMessage('success', 'Session ID copied to clipboard!');
+  };
+
   const generateApiKey = async () => {
     if (!window.confirm('Are you sure you want to generate a new API key? Your old key will stop working.')) {
       return;
@@ -102,9 +137,52 @@ function Settings() {
         setApiKey(response.data.data.apiKey);
         setShowApiKey(true);
         showMessage('success', 'New API key generated successfully!');
+      } else {
+        showMessage('error', response.data.message || 'Failed to generate API key');
       }
     } catch (error) {
-      showMessage('error', error.response?.data?.message || 'Failed to generate API key');
+      console.error('Error generating API key:', error);
+      console.error('Full error response:', error.response);
+      
+      const errorData = error.response?.data || {};
+      const errorMessage = errorData.message || 
+                          errorData.error || 
+                          error.message || 
+                          'Failed to generate API key. Please check if the api_key column exists in the users table.';
+      
+      // Show the error message
+      showMessage('error', errorMessage);
+      
+      // Log full error details to console for debugging
+      if (error.response?.data) {
+        console.error('Backend error details:', JSON.stringify(error.response.data, null, 2));
+      }
+      
+      // If SQL help is provided, show it in console and alert
+      if (errorData.sqlHelp) {
+        console.error('Database migration needed. Run this SQL in Supabase SQL Editor:');
+        console.error(errorData.sqlHelp);
+        
+        // Show alert with SQL command
+        setTimeout(() => {
+          alert(`Database Migration Required\n\n${errorData.message}\n\nRun this SQL in your Supabase SQL Editor:\n\n${errorData.sqlHelp}`);
+        }, 500);
+      } else if (errorData.error === 'COLUMN_MISSING' || errorMessage.includes('column')) {
+        const sqlHelp = 'ALTER TABLE users ADD COLUMN IF NOT EXISTS api_key TEXT UNIQUE;\nCREATE INDEX IF NOT EXISTS idx_users_api_key ON users(api_key);';
+        console.error('Database column may be missing. Run this SQL in Supabase:');
+        console.error(sqlHelp);
+        
+        setTimeout(() => {
+          alert(`Database Migration Required\n\nThe api_key column is missing from the users table.\n\nRun this SQL in your Supabase SQL Editor:\n\n${sqlHelp}`);
+        }, 500);
+      }
+      
+      // Check for service role key error
+      if (errorMessage.includes('SUPABASE_SERVICE_ROLE_KEY') || errorMessage.includes('Database connection error')) {
+        setTimeout(() => {
+          alert(`Configuration Error\n\n${errorMessage}\n\nPlease check your backend .env file and ensure SUPABASE_SERVICE_ROLE_KEY is set correctly.`);
+        }, 500);
+      }
     } finally {
       setGeneratingApiKey(false);
     }
@@ -189,6 +267,8 @@ function Settings() {
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'security', label: 'Security', icon: Shield },
     { id: 'api-keys', label: 'API Keys', icon: Key },
+    { id: 'sessions', label: 'Sessions', icon: MessageSquare },
+    { id: 'api-docs', label: 'API Docs', icon: BookOpen },
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'appearance', label: 'Appearance', icon: Palette },
     { id: 'danger', label: 'Danger Zone', icon: AlertCircle },
@@ -436,7 +516,8 @@ function Settings() {
               <CardHeader>
                 <CardTitle>API Keys</CardTitle>
                 <CardDescription>
-                  Use API keys to authenticate your applications with the WhatsApp Platform API
+                  Use API keys to authenticate your applications with the Streamfinitytv WhatsApp API.
+                  API keys never expire and remain valid until you regenerate or revoke them.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -447,6 +528,9 @@ function Settings() {
                       <h3 className="font-semibold">Your API Key</h3>
                       <p className="text-sm text-muted-foreground">
                         Keep this key secure. Anyone with this key can access your account through the API.
+                        <span className="block mt-1 text-xs">
+                          ⏰ <strong>Note:</strong> API keys never expire and remain valid until manually regenerated.
+                        </span>
                       </p>
                     </div>
                     <Badge variant={apiKey ? 'success' : 'secondary'}>
@@ -564,6 +648,378 @@ function Settings() {
                 </div>
               </CardContent>
             </Card>
+          )}
+
+          {/* Sessions Tab */}
+          {activeTab === 'sessions' && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Sessions</CardTitle>
+                <CardDescription>
+                  View and copy your WhatsApp session IDs for easy integration
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {loadingSessions ? (
+                  <div className="flex items-center justify-center p-8">
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                  </div>
+                ) : sessions.length === 0 ? (
+                  <div className="text-center p-8 border-2 border-dashed rounded-lg">
+                    <MessageSquare className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                    <h3 className="font-semibold mb-2">No Sessions Found</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Create a session to get started
+                    </p>
+                    <Button
+                      onClick={() => window.location.href = '/sessions'}
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Go to Sessions
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {sessions.map((session) => (
+                      <div
+                        key={session.id}
+                        className="p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <h3 className="font-semibold">{session.session_name || 'Unnamed Session'}</h3>
+                              <Badge
+                                variant={
+                                  session.status === 'connected'
+                                    ? 'success'
+                                    : session.status === 'connecting'
+                                    ? 'default'
+                                    : 'secondary'
+                                }
+                              >
+                                {session.status === 'connected' ? (
+                                  <CheckCircle2 className="h-3 w-3 mr-1" />
+                                ) : session.status === 'connecting' ? (
+                                  <Clock className="h-3 w-3 mr-1" />
+                                ) : (
+                                  <XCircle className="h-3 w-3 mr-1" />
+                                )}
+                                {session.status || 'disconnected'}
+                              </Badge>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <div>
+                                <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                                  Session ID
+                                </label>
+                                <div className="flex items-center gap-2">
+                                  <code className="flex-1 bg-background border px-3 py-2 rounded text-sm font-mono break-all">
+                                    {session.id}
+                                  </code>
+                                  <Button
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={() => copySessionId(session.id)}
+                                    title="Copy Session ID"
+                                  >
+                                    <Copy className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                              
+                              {session.created_at && (
+                                <p className="text-xs text-muted-foreground">
+                                  Created: {new Date(session.created_at).toLocaleString()}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Quick Actions */}
+                        <div className="flex items-center gap-2 pt-3 border-t">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => copySessionId(session.id)}
+                          >
+                            <Copy className="mr-2 h-3 w-3" />
+                            Copy ID
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => window.location.href = '/sessions'}
+                          >
+                            <MessageSquare className="mr-2 h-3 w-3" />
+                            Manage
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Info Card */}
+                <div className="p-4 bg-accent rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <QrCode className="h-5 w-5 text-primary mt-0.5" />
+                    <div className="flex-1 space-y-2">
+                      <h4 className="font-semibold text-sm">How to use Session IDs</h4>
+                      <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
+                        <li>Session IDs are used to identify which WhatsApp account to use in API requests</li>
+                        <li>Include the session ID in API calls to send messages, manage contacts, etc.</li>
+                        <li>Copy the Session ID and use it in the <code>sessionId</code> parameter</li>
+                        <li>Only connected sessions can send messages</li>
+                      </ul>
+                      <div className="mt-3 p-2 bg-background rounded text-xs font-mono">
+                        <div className="text-muted-foreground mb-1">Example API Request:</div>
+                        <div className="text-foreground">
+                          POST /api/messages/send<br />
+                          {`{ "sessionId": "${sessions[0]?.id || 'YOUR_SESSION_ID'}", "to": "...", "message": "..." }`}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* API Docs Tab */}
+          {activeTab === 'api-docs' && (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>API Documentation</CardTitle>
+                  <CardDescription>
+                    Complete reference for the Streamfinitytv WhatsApp API
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Quick Links */}
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <a
+                      href="/api"
+                      className="p-4 border-2 rounded-lg hover:border-primary transition-all group"
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex items-center gap-3">
+                          <BookOpen className="h-5 w-5 text-primary" />
+                          <h3 className="font-semibold">Full Documentation</h3>
+                        </div>
+                        <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        View comprehensive API reference with all endpoints, examples, and code samples
+                      </p>
+                    </a>
+
+                    <a
+                      href={`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api-docs`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-4 border-2 rounded-lg hover:border-primary transition-all group"
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex items-center gap-3">
+                          <Code className="h-5 w-5 text-primary" />
+                          <h3 className="font-semibold">Swagger UI</h3>
+                        </div>
+                        <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Interactive API explorer and testing interface
+                      </p>
+                    </a>
+                  </div>
+
+                  {/* Quick Reference */}
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-lg">Quick Reference</h3>
+                    
+                    <div className="space-y-3">
+                      <div className="p-4 border rounded-lg bg-accent/50">
+                        <div className="flex items-center gap-2 mb-2">
+                          <MessageSquare className="h-4 w-4 text-primary" />
+                          <span className="font-medium text-sm">Base URL</span>
+                        </div>
+                        <code className="text-xs bg-background px-2 py-1 rounded block">
+                          {process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api
+                        </code>
+                      </div>
+
+                      <div className="p-4 border rounded-lg bg-accent/50">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Key className="h-4 w-4 text-primary" />
+                          <span className="font-medium text-sm">Authentication</span>
+                        </div>
+                        <div className="space-y-2 text-sm">
+                          <div>
+                            <span className="text-muted-foreground">Header:</span>
+                            <code className="ml-2 bg-background px-2 py-1 rounded text-xs">x-api-key: YOUR_API_KEY</code>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Or:</span>
+                            <code className="ml-2 bg-background px-2 py-1 rounded text-xs">Authorization: Bearer YOUR_API_KEY</code>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Main Endpoints */}
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-lg">Main Endpoints</h3>
+                    
+                    <div className="grid gap-3">
+                      <div className="p-3 border rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                          <MessageSquare className="h-4 w-4 text-primary" />
+                          <span className="font-medium text-sm">Sessions</span>
+                          <Badge variant="outline" className="ml-auto text-xs">GET, POST, DELETE</Badge>
+                        </div>
+                        <code className="text-xs text-muted-foreground">/api/sessions</code>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Manage WhatsApp Web sessions and accounts
+                        </p>
+                      </div>
+
+                      <div className="p-3 border rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Send className="h-4 w-4 text-primary" />
+                          <span className="font-medium text-sm">Messages</span>
+                          <Badge variant="outline" className="ml-auto text-xs">POST</Badge>
+                        </div>
+                        <code className="text-xs text-muted-foreground">/api/messages/send</code>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Send text and media messages
+                        </p>
+                      </div>
+
+                      <div className="p-3 border rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Bot className="h-4 w-4 text-primary" />
+                          <span className="font-medium text-sm">Bots</span>
+                          <Badge variant="outline" className="ml-auto text-xs">GET, POST, PUT, DELETE</Badge>
+                        </div>
+                        <code className="text-xs text-muted-foreground">/api/bots</code>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Create and manage automated messaging bots
+                        </p>
+                      </div>
+
+                      <div className="p-3 border rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Users className="h-4 w-4 text-primary" />
+                          <span className="font-medium text-sm">Contacts</span>
+                          <Badge variant="outline" className="ml-auto text-xs">GET, POST, PUT, DELETE</Badge>
+                        </div>
+                        <code className="text-xs text-muted-foreground">/api/contacts</code>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Manage contacts and contact groups
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Example Code */}
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-lg">Quick Example</h3>
+                    
+                    <div className="p-4 bg-muted border rounded-lg">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-medium">cURL Example</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            const code = `curl -H "x-api-key: ${showApiKey && apiKey ? apiKey : 'YOUR_API_KEY'}" \\
+  ${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/sessions`;
+                            navigator.clipboard.writeText(code);
+                            showMessage('success', 'Code copied to clipboard!');
+                          }}
+                        >
+                          <Copy className="h-3 w-3 mr-1" />
+                          Copy
+                        </Button>
+                      </div>
+                      <pre className="text-xs overflow-x-auto">
+                        <code className="text-foreground">
+{`curl -H "x-api-key: ${showApiKey && apiKey ? apiKey : 'YOUR_API_KEY'}" \\
+  ${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/sessions`}
+                        </code>
+                      </pre>
+                    </div>
+
+                    <div className="p-4 bg-muted border rounded-lg">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-medium">JavaScript Example</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            const code = `const axios = require('axios');
+
+axios.get('${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/sessions', {
+  headers: {
+    'x-api-key': '${showApiKey && apiKey ? apiKey : 'YOUR_API_KEY'}'
+  }
+}).then(response => {
+  console.log(response.data);
+});`;
+                            navigator.clipboard.writeText(code);
+                            showMessage('success', 'Code copied to clipboard!');
+                          }}
+                        >
+                          <Copy className="h-3 w-3 mr-1" />
+                          Copy
+                        </Button>
+                      </div>
+                      <pre className="text-xs overflow-x-auto">
+                        <code className="text-foreground">
+{`const axios = require('axios');
+
+axios.get('${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/sessions', {
+  headers: {
+    'x-api-key': '${showApiKey && apiKey ? apiKey : 'YOUR_API_KEY'}'
+  }
+}).then(response => {
+  console.log(response.data);
+});`}
+                        </code>
+                      </pre>
+                    </div>
+                  </div>
+
+                  {/* Call to Action */}
+                  {!apiKey && (
+                    <div className="p-4 bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                      <div className="flex items-start gap-3">
+                        <Key className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-yellow-900 dark:text-yellow-100 mb-1">
+                            Generate your API key to start using the API
+                          </p>
+                          <p className="text-xs text-yellow-800 dark:text-yellow-200 mb-3">
+                            Visit the API Keys tab above to generate your key
+                          </p>
+                          <Button
+                            size="sm"
+                            onClick={() => setActiveTab('api-keys')}
+                          >
+                            <Key className="mr-2 h-4 w-4" />
+                            Go to API Keys
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           )}
 
           {/* Notifications Tab */}

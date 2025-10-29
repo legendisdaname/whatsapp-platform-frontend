@@ -11,7 +11,7 @@ const Footer = ({ isCollapsed = false }) => {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
           {/* Left side - Copyright */}
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span className="font-medium">© {currentYear} WhatsApp Platform</span>
+            <span className="font-medium">© {currentYear} Streamfinitytv WhatsApp</span>
             <span className="hidden sm:inline">•</span>
             <span className="hidden md:flex items-center gap-1">
               Made with <Heart className="h-3 w-3 text-red-500 fill-current animate-pulse" /> for automation
@@ -21,7 +21,7 @@ const Footer = ({ isCollapsed = false }) => {
           {/* Right side - Links */}
           <div className="flex items-center gap-3 text-xs">
             <Link
-              to="/api-docs"
+              to="/api"
               className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
             >
               <BookOpen className="h-3 w-3" />
