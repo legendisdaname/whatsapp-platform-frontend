@@ -21,7 +21,7 @@ REACT_APP_SUPABASE_ANON_KEY=your_supabase_anon_key
 npm start
 ```
 
-The app will open at http://localhost:3000
+The app will open at the configured FRONTEND_URL or production URL
 
 ## 📁 Project Structure
 

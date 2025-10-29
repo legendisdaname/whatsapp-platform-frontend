@@ -739,7 +739,7 @@ sendMessage();`}
                       code={`import requests
 
 API_KEY = '${apiKey || 'wp_live_your_api_key_here'}'
-BASE_URL = 'http://localhost:5000/api'
+BASE_URL = '${process.env.REACT_APP_API_URL || 'https://whatsapp-platform-backend.onrender.com'}/api'
 
 def get_sessions():
     headers = {
