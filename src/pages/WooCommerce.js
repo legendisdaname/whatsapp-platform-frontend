@@ -49,6 +49,10 @@ function WooCommerce() {
     order_completed_template: '',
     enabled: true
   });
+  const [connectionStatus, setConnectionStatus] = useState(null);
+  const [verifying, setVerifying] = useState(false);
+  const [recentOrders, setRecentOrders] = useState([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -84,6 +88,11 @@ function WooCommerce() {
         });
         setIsConfigured(true);
         setSetupStep(3); // Already configured
+        
+        // Load recent orders if credentials are available
+        if (loadedSettings.consumer_key && loadedSettings.consumer_secret) {
+          fetchRecentOrders();
+        }
       } else {
         setIsConfigured(false);
         setSetupStep(1); // Start setup
@@ -186,6 +195,54 @@ function WooCommerce() {
   const showMessage = (type, text) => {
     setMessage({ type, text });
     setTimeout(() => setMessage({ type: '', text: '' }), 5000);
+  };
+
+  const verifyConnection = async () => {
+    if (!settings.store_url || !settings.consumer_key || !settings.consumer_secret) {
+      showMessage('error', 'Please enter store URL, Consumer Key, and Consumer Secret');
+      return;
+    }
+
+    try {
+      setVerifying(true);
+      const response = await api.post('/api/woocommerce/verify', {
+        store_url: settings.store_url,
+        consumer_key: settings.consumer_key,
+        consumer_secret: settings.consumer_secret
+      });
+
+      if (response.data.success) {
+        setConnectionStatus({ verified: true, message: response.data.message, info: response.data.store_info });
+        showMessage('success', 'Store connection verified successfully! ✅');
+      } else {
+        setConnectionStatus({ verified: false, error: response.data.error });
+        showMessage('error', response.data.error || 'Verification failed');
+      }
+    } catch (error) {
+      const errorMsg = error.response?.data?.error || error.message || 'Verification failed';
+      setConnectionStatus({ verified: false, error: errorMsg });
+      showMessage('error', errorMsg);
+    } finally {
+      setVerifying(false);
+    }
+  };
+
+  const fetchRecentOrders = async () => {
+    if (!settings.consumer_key || !settings.consumer_secret) return;
+    
+    try {
+      setLoadingOrders(true);
+      const response = await api.get('/api/woocommerce/orders?limit=5&status=any');
+      
+      if (response.data.success) {
+        setRecentOrders(response.data.orders || []);
+      }
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      // Silently fail - not critical
+    } finally {
+      setLoadingOrders(false);
+    }
   };
 
   const copyWebhookUrl = (endpoint) => {
@@ -367,10 +424,10 @@ Thank you for shopping with us!`
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Store className="h-5 w-5" />
-                Step 1: Enter Your Store URL
+                Step 1: Enter Your Store Details
               </CardTitle>
               <CardDescription>
-                We'll automatically connect to your WooCommerce store
+                Connect to your WooCommerce store with API credentials
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -390,6 +447,97 @@ Thank you for shopping with us!`
                 </p>
               </div>
 
+              <div className="grid w-full items-center gap-3">
+                <Label htmlFor="consumer-key">Consumer Key (Optional)</Label>
+                <Input
+                  id="consumer-key"
+                  type="text"
+                  value={settings.consumer_key}
+                  onChange={(e) => setSettings({...settings, consumer_key: e.target.value})}
+                  placeholder="ck_..."
+                  icon={<Key className="h-4 w-4" />}
+                />
+                <p className="text-xs text-muted-foreground">
+                  WooCommerce REST API Consumer Key (optional - for advanced features)
+                </p>
+              </div>
+
+              <div className="grid w-full items-center gap-3">
+                <Label htmlFor="consumer-secret">Consumer Secret (Optional)</Label>
+                <Input
+                  id="consumer-secret"
+                  type="password"
+                  value={settings.consumer_secret}
+                  onChange={(e) => setSettings({...settings, consumer_secret: e.target.value})}
+                  placeholder="cs_..."
+                  icon={<Key className="h-4 w-4" />}
+                />
+                <p className="text-xs text-muted-foreground">
+                  WooCommerce REST API Consumer Secret (optional - for advanced features)
+                </p>
+              </div>
+
+              {settings.store_url && settings.consumer_key && settings.consumer_secret && (
+                <div className="p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg">
+                  <div className="flex items-start gap-3 mb-3">
+                    <SettingsIcon className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-1">
+                        Verify Connection
+                      </p>
+                      <p className="text-xs text-blue-800 dark:text-blue-200 mb-3">
+                        Test your store connection before continuing
+                      </p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={verifyConnection}
+                        disabled={verifying}
+                      >
+                        {verifying ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Verifying...
+                          </>
+                        ) : (
+                          <>
+                            <TestTube className="mr-2 h-4 w-4" />
+                            Verify Connection
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  {connectionStatus && (
+                    <div className={`mt-3 p-3 rounded-lg ${
+                      connectionStatus.verified 
+                        ? 'bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800' 
+                        : 'bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800'
+                    }`}>
+                      {connectionStatus.verified ? (
+                        <>
+                          <div className="flex items-center gap-2 text-green-900 dark:text-green-100">
+                            <CheckCircle className="h-4 w-4" />
+                            <p className="text-sm font-medium">{connectionStatus.message}</p>
+                          </div>
+                          {connectionStatus.info && (
+                            <p className="text-xs text-green-800 dark:text-green-200 mt-1">
+                              WooCommerce Version: {connectionStatus.info.wc_version}
+                            </p>
+                          )}
+                        </>
+                      ) : (
+                        <div className="flex items-center gap-2 text-red-900 dark:text-red-100">
+                          <XCircle className="h-4 w-4" />
+                          <p className="text-sm font-medium">{connectionStatus.error}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
               <div className="p-4 bg-accent rounded-lg">
                 <p className="text-sm font-semibold mb-2">What happens next?</p>
                 <ul className="text-sm text-muted-foreground space-y-1">
@@ -404,6 +552,10 @@ Thank you for shopping with us!`
                   <li className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 mt-0.5 text-primary" />
                     Your store connects automatically
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 mt-0.5 text-primary" />
+                    Consumer Key/Secret are optional - you can add them later for advanced features
                   </li>
                 </ul>
               </div>
@@ -574,13 +726,55 @@ Thank you for shopping with us!`
                 <CardDescription>{settings.store_url}</CardDescription>
               </div>
             </div>
-            <Button variant="outline" size="sm" onClick={() => { setIsConfigured(false); setSetupStep(1); }}>
-              <SettingsIcon className="mr-2 h-4 w-4" />
-              Reconfigure
-            </Button>
+            <div className="flex gap-2">
+              {settings.consumer_key && settings.consumer_secret && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={verifyConnection}
+                  disabled={verifying}
+                >
+                  {verifying ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Verifying...
+                    </>
+                  ) : (
+                    <>
+                      <TestTube className="mr-2 h-4 w-4" />
+                      Verify
+                    </>
+                  )}
+                </Button>
+              )}
+              <Button variant="outline" size="sm" onClick={() => { setIsConfigured(false); setSetupStep(1); }}>
+                <SettingsIcon className="mr-2 h-4 w-4" />
+                Reconfigure
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
+          {connectionStatus && (
+            <div className={`mb-4 p-3 rounded-lg ${
+              connectionStatus.verified 
+                ? 'bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800' 
+                : 'bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800'
+            }`}>
+              {connectionStatus.verified ? (
+                <div className="flex items-center gap-2 text-green-900 dark:text-green-100">
+                  <CheckCircle className="h-4 w-4" />
+                  <p className="text-sm font-medium">Store connection verified</p>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-red-900 dark:text-red-100">
+                  <XCircle className="h-4 w-4" />
+                  <p className="text-sm font-medium">{connectionStatus.error}</p>
+                </div>
+              )}
+            </div>
+          )}
+          
           <div className="grid gap-4 md:grid-cols-2">
             <div className="flex items-center gap-3 p-3 bg-accent rounded-lg">
               <MessageSquare className="h-8 w-8 text-primary" />
@@ -600,9 +794,159 @@ Thank you for shopping with us!`
                 </p>
               </div>
             </div>
+            <div className="flex items-center gap-3 p-3 bg-accent rounded-lg">
+              <Key className="h-8 w-8 text-primary" />
+              <div>
+                <p className="font-medium text-sm">API Credentials</p>
+                <p className="text-xs text-muted-foreground">
+                  {settings.consumer_key && settings.consumer_secret ? 'Configured' : 'Not configured'}
+                </p>
+              </div>
+            </div>
+            {settings.consumer_key && settings.consumer_secret && (
+              <div className="flex items-center gap-3 p-3 bg-accent rounded-lg">
+                <Package className="h-8 w-8 text-primary" />
+                <div>
+                  <p className="font-medium text-sm">Recent Orders</p>
+                  <p className="text-xs text-muted-foreground">
+                    {recentOrders.length} orders synced
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
+
+          {/* Consumer Key/Secret Section */}
+          {!settings.consumer_key || !settings.consumer_secret ? (
+            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <p className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                🔑 Add API Credentials (Optional)
+              </p>
+              <p className="text-xs text-blue-800 dark:text-blue-200 mb-3">
+                Add your WooCommerce Consumer Key and Secret to enable advanced features like order sync and store verification.
+              </p>
+              <div className="grid gap-3 md:grid-cols-2">
+                <div>
+                  <Label htmlFor="edit-consumer-key" className="text-xs">Consumer Key</Label>
+                  <Input
+                    id="edit-consumer-key"
+                    type="text"
+                    value={settings.consumer_key}
+                    onChange={(e) => setSettings({...settings, consumer_key: e.target.value})}
+                    placeholder="ck_..."
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-consumer-secret" className="text-xs">Consumer Secret</Label>
+                  <Input
+                    id="edit-consumer-secret"
+                    type="password"
+                    value={settings.consumer_secret}
+                    onChange={(e) => setSettings({...settings, consumer_secret: e.target.value})}
+                    placeholder="cs_..."
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+              <Button 
+                size="sm" 
+                className="mt-3"
+                onClick={async () => {
+                  await saveSettings();
+                  if (settings.consumer_key && settings.consumer_secret) {
+                    verifyConnection();
+                    fetchRecentOrders();
+                  }
+                }}
+              >
+                Save Credentials
+              </Button>
+            </div>
+          ) : (
+            <div className="mt-4 p-3 bg-accent rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium">API Credentials Configured</p>
+                  <p className="text-xs text-muted-foreground">
+                    Consumer Key: {settings.consumer_key.substring(0, 8)}...{settings.consumer_key.substring(settings.consumer_key.length - 4)}
+                  </p>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => {
+                    setSettings({...settings, consumer_key: '', consumer_secret: ''});
+                    setConnectionStatus(null);
+                    setRecentOrders([]);
+                  }}
+                >
+                  Remove
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
+
+      {/* Recent Orders Card (if credentials are set) */}
+      {settings.consumer_key && settings.consumer_secret && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="h-5 w-5" />
+                  Recent Orders
+                </CardTitle>
+                <CardDescription>
+                  Orders from your WooCommerce store
+                </CardDescription>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={fetchRecentOrders}
+                disabled={loadingOrders}
+              >
+                <RefreshCw className={`mr-2 h-4 w-4 ${loadingOrders ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {loadingOrders ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              </div>
+            ) : recentOrders.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Package className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                <p>No orders found</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {recentOrders.map((order) => (
+                  <div key={order.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex-1">
+                      <p className="font-medium">Order #{order.number || order.id}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {order.billing?.first_name} {order.billing?.last_name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(order.date_created).toLocaleString()} • {order.currency} {order.total}
+                      </p>
+                    </div>
+                    <Badge variant={order.status === 'completed' ? 'success' : order.status === 'processing' ? 'default' : 'outline'}>
+                      {order.status}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* WordPress Plugin Download */}
       <Card>

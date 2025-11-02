@@ -13,7 +13,9 @@ import {
   HelpCircle,
   MessageCircle,
   ChevronLeft,
-  Menu
+  Menu,
+  ShoppingCart,
+  BookOpen
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -27,6 +29,8 @@ const AppSidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse, onLogout }
     { name: 'Contacts', href: '/contacts', icon: Users },
     { name: 'Bots', href: '/bots', icon: Bot },
     { name: 'Messages', href: '/messages', icon: Send },
+    { name: 'WooCommerce', href: '/woocommerce', icon: ShoppingCart },
+    { name: 'API Docs', href: '/api', icon: BookOpen },
   ];
 
   const bottomNavigation = [
